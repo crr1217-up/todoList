@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./index.css">
+</head>
+<body>
+    <div class="demo">
+        <div class="header">
+            <div class="middle">
+                <h2>toDoList</h2>
+                <div class="inp">
+                    <input 
+                        type="text" name="" id=""
+                        @input="getValue"
+                        :value="val"
+                    >
+                    <button
+                        @click="addEvent"
+                    >添加</button>
+                </div>
+            </div>
+        </div>
+        <div class="middle m1">
+            <div class="title">
+                <h2>正在进行</h2>
+                <span class="num">{{todoArr.length}}</span>
+            </div>
+            <ul class="todo">
+                <li 
+                    v-for="(info,index) in todoArr"
+                >
+                   <div class="des">
+                        <input type="checkbox" 
+                            @change="checkChange(index,'todo')"
+                        >
+                        <span class="info">{{info}}</span>
+                    </div>
+                    <button class="del"
+                        @click="delItem(index,'todo')"
+                    >删除</button>
+                </li>
+            </ul>
+        </div>
+        <div class="middle m1">
+            <div class="title">
+                <h2>已经完成</h2>
+                <span class="num">{{completeArr.length}}</span>
+            </div>
+            <ul class="complete">
+                <li v-for="(item,index) in completeArr">
+                    <div class="des">
+                        <input type="checkbox" 
+                            @change="checkChange(index,'com')"
+                        >
+                        <span class="info">{{item}}</span>
+                    </div>
+                    <button class="del"
+                        @click="delItem(index,'com')"
+                    >删除</button>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <script src="./vue.js"></script>
+    <script>
+        const vm = new Vue({
+            el:".demo",
+            data:{
+                val:"",//输入框的value
+                todoArr:[],//正在进行的任务列表
+                completeArr:[]//已完成的任务列表
+            },
+            methods:{
+                getValue(e){//拿到输入框的数据
+                    this.val = e.target.value;
+                },
+                addEvent(){//添加进任务列表
+                    if(this.val==""){//内容为空不添加
+                        return;
+                    }
+                    //防止重复添加
+                   for (let i = 0; i < this.todoArr.length; i++) {
+                       const ele = this.todoArr[i];
+                       if(ele==this.val){
+                           const aa = confirm("该任务已存在,确认再次添加？");
+                          if(!aa){
+                            this.val = "";
+                            return false;
+                          }
+                       }
+                   }
+                    this.todoArr.push(this.val);
+                    this.val = "";
+                },
+                checkChange(index,flag){//复选框点击事件
+                    if(flag=="todo"){
+                        const arr = this.todoArr.splice(index,1);
+                        this.completeArr.push(...arr);
+                    }else{
+                        const arr = this.completeArr.splice(index,1);
+                        this.todoArr.push(...arr);
+                    }
+                    
+                },
+                delItem(index,flag){//删除任务事件
+                    flag=="todo"?this.todoArr.splice(index,1):this.completeArr.splice(index,1);
+                }
+            }
+        })
+    </script>
+</body>
+</html>
